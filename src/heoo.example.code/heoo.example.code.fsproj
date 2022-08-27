@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="ExampleApp.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\heoo.lib\heoo.lib.fsproj" />
+    </ItemGroup>
+
+</Project>

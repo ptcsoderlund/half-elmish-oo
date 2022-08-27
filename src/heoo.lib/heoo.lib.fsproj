@@ -3,10 +3,19 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Title>Half elmish OO</Title>
+        <Copyright>ptcsoderlund@gmail.com</Copyright>
+        <PackageProjectUrl>https://github.com/ptcsoderlund/half-elmish-oo</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/ptcsoderlund/half-elmish-oo/blob/main/LICENSE</PackageLicenseUrl>
+        <Company>N/A</Company>
+        <AssemblyVersion>1.0</AssemblyVersion>
+        <FileVersion>1.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="ElmishProgramAsync.fs" />
+        <Compile Include="ViewModelBase.fs" />
+        <Compile Include="CommandBase.fs" />
     </ItemGroup>
 
 </Project>

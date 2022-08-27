@@ -1,3 +1,9 @@
 /.idea
 /heoo.lib/bin
 /heoo.lib/obj
+
+/heoo.example.code/bin
+/heoo.example.code/obj
+
+/heoo.example.wpf/bin
+/heoo.example.wpf/obj
