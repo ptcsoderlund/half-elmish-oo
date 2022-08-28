@@ -8,8 +8,9 @@
         <PackageProjectUrl>https://github.com/ptcsoderlund/half-elmish-oo</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/ptcsoderlund/half-elmish-oo/blob/main/LICENSE</PackageLicenseUrl>
         <Company>N/A</Company>
-        <AssemblyVersion>1.0</AssemblyVersion>
-        <FileVersion>1.0</FileVersion>
+        <AssemblyVersion>0.1.0</AssemblyVersion>
+        <FileVersion>0.1.0</FileVersion>
+        <PackageVersion>0.1.0</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
