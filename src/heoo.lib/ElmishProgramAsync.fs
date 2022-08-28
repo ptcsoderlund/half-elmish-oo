@@ -6,7 +6,7 @@ type private programMessage<'ModelT,'MessageT> =
     | ProgramInstruction of 'MessageT
     | Dispose
    
-//Create a message loop for the program.
+   
 type T<'ModelT,'MessageT>(initialModel:'ModelT,updateFun:'ModelT -> 'MessageT -> 'ModelT) =
     let mutable onModelUpdated: Action<'ModelT> option = None
     let mutable _isDisposed:bool = false
