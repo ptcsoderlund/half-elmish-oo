@@ -14,17 +14,17 @@
     >
     <Grid>
 <StackPanel HorizontalAlignment="Left" Width="380">
-    <TextBlock Text="Some text: " Foreground="Gray"/>
-    <TextBlock Margin="8,0,0,0" Text="{Binding GetSetSomeText}" />
     <TextBlock Margin="0,16,0,0" Text="Counter text: " Foreground="Gray"/>
     <TextBlock Margin="8,0,0,0" Text="{Binding GetCounter}"/>
     <Button Command="{Binding IncreaseCmd}">Increase</Button>
     <Button Command="{Binding DecreaseCmd}">Decrease</Button>
     <Button Command="{Binding ResetCmd}">Reset</Button>
-    <TextBlock Text="Change some text (updates on focus leave): " Foreground="Gray"/>
-    <TextBox Margin="8,0,0,0" Text="{Binding GetSetSomeText,Mode=TwoWay,ValidatesOnDataErrors=True}"/>
-    
+    <TextBlock Text="Change some text (empty is invalid): " Foreground="Gray"/>
+    <TextBox Margin="8,0,0,0" Text="{Binding GetSetSomeText,Mode=TwoWay,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+    <TextBlock Text="{Binding GetSomeText}"/>
     <TextBlock Margin="0,16,0,0" Text="All errors:" Foreground="Gray"/>
+    <TextBlock Margin="0,16,0,0" Text="Change some text (updates on focus leave)" />
+    <TextBox Text="{Binding GetSetSomeTextUnfocus}"/>
     <ItemsControl ItemsSource="{Binding GetAllErrorMessages}" Foreground="DarkRed"></ItemsControl>
 </StackPanel>
     </Grid>

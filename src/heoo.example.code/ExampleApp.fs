@@ -4,13 +4,14 @@ open System
 open heoo.lib
 
 //Lets just make a counter app for demoing purpose
-type Model = { SomeText: string; Counter: int }
+type Model = { SomeText: string; SomeTextUnfocus:string; Counter: int }
 
 type Message =
     | Increase
     | Decrease
     | Reset
     | SetText of string
+    | SetTextUnfocus of string
 
 
 let Update model message =
@@ -19,20 +20,52 @@ let Update model message =
     | Decrease -> { model with Counter = model.Counter - 1 }
     | Reset -> { model with Counter = 0 }
     | SetText text -> { model with SomeText = text }
+    | SetTextUnfocus s -> {model with SomeTextUnfocus=s}
 
 type ExampleVM(initialModel, messageDispatch) =
     inherit ViewModelBase.T<Model, Message>(initialModel)
-
+    let mutable someTextExpected = ""
+    member this.GetSomeText
+        with get() =
+            this.getPropertyValue(
+                fun model -> model.SomeText
+                )
     member this.GetSetSomeText
         with get() =
-            //Not an error if empty
             this.getPropertyError (fun model ->
                 match model.SomeText with
                 | "" -> "Enter some text"
                 | _ -> "")
-
-            this.getPropertyValue (fun model -> model.SomeText)
-        and set v = messageDispatch(SetText v)
+            this.getPropertyValue(
+                fun model ->
+                    //Apparently wpf spams the getter when used in textbox.
+                    //Which means the value wont be updated which sets the textbox text and moves the caret.
+                    //Maybe UpdateSourceTrigger=PropertyChanged means if any property changes, the getter is called.
+                    if model.SomeText.Equals(someTextExpected) then
+                       someTextExpected <- "" 
+                    if someTextExpected.Equals "" then
+                        model.SomeText
+                    else
+                        someTextExpected 
+                )
+        and set v =
+            someTextExpected <- v
+            messageDispatch(SetText v)
+    member this.GetSetSomeTextUnfocus
+        with get() =
+            this.getPropertyError(
+                fun model ->
+                    if model.SomeTextUnfocus.Equals "" then
+                        "Enter some text and then unfocus the textbox"
+                    else ""
+                )
+            this.getPropertyValue(
+                fun model -> model.SomeTextUnfocus
+                )
+        and set v =
+            v
+            |> SetTextUnfocus
+            |> messageDispatch
     member this.GetAllErrorMessages
         with get():string [] =
             this.getPropertyValue(fun model ->
@@ -51,7 +84,7 @@ type ExampleVM(initialModel, messageDispatch) =
             CommandBase.T((fun _ -> model.Counter <> 0), (fun _ -> Reset |> messageDispatch)))
 
 let initialModel =
-    { SomeText = "Change me"; Counter = 1 }
+    { SomeText = "Change me"; SomeTextUnfocus="Change me too" ;Counter = 1 }
   
 //Remember to bind ElmishProgram.OnNewModel to the vm or vm wont update.
 let ElmishProgram = ElmishProgramAsync.T(initialModel,Update)
