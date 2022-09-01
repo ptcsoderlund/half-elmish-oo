@@ -5,8 +5,10 @@ open System
 type private programMessage<'ModelT,'MessageT> =
     | ProgramInstruction of 'MessageT
     | Dispose
-   
-   
+    
+///Create a message loop program
+///Remember to set OnModelUpdated to subscribe to model updates (and maybe do thread synch there?).
+/// Message processing stops when the program is disposed.
 type T<'ModelT,'MessageT>(initialModel:'ModelT,updateFun:'ModelT -> 'MessageT -> 'ModelT) =
     let mutable onModelUpdated: Action<'ModelT> option = None
     let mutable _isDisposed:bool = false

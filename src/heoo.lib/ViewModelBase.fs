@@ -4,9 +4,11 @@ open System.Collections.Concurrent
 open System.ComponentModel
 open System.Runtime.CompilerServices
 
-///Create a ViewModel class by inheriting this one.
-/// use getPropertyValue in getters and messageDispatch in setters.
-/// Connect the update function to a elmish program.
+///The idea here is to inherit this class for a viewmodel class.
+/// Use this.getPropertyValue always, in getters.
+/// Wire ElmishProgramAsync.OnModelUpdated into T.updateModel.
+/// Also use ElmishProgramAsync.PostMessage in setters.
+[<AbstractClass>]
 type T<'ModelT, 'MessageT>(initialModel: 'ModelT) =
     //INotifyPropertychanged
     let propEv = Event<_, _>()
@@ -60,10 +62,13 @@ type T<'ModelT, 'MessageT>(initialModel: 'ModelT) =
             if
                 match (a, b) with
                 | (Some x, Some y) -> x.Equals(y) |> not
-                | _ -> a = b |> not
+                | _ -> a.Equals(b) |> not
             then
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
-
+    member this.AsInotifyPropertyChanged
+        with get() = this :> INotifyPropertyChanged
+    member this.AsIDataErrorInfo
+        with get() = this :> IDataErrorInfo
     interface INotifyPropertyChanged with
 
         [<CLIEvent>]
