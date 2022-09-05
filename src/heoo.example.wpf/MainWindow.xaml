@@ -8,14 +8,10 @@
         xmlns:wpf="clr-namespace:heoo.example.wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        DataContext="{x:Static code:ExampleApp.SingletonVm}"
+        DataContext="{x:Static code:ExampleApp.viewModelInstance}"
         Closing="MainWindow_OnClosing"
         FontSize="19">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Left">
             <TextBlock Margin="0,16,0,0" Text="Counter text: " Foreground="Gray" />
             <TextBlock Margin="8,0,0,0" Text="{Binding GetCounter}" />
@@ -24,20 +20,11 @@
             <Button Command="{Binding ResetCmd}">Reset</Button>
             <TextBlock Text="Change some text (empty is invalid): " Foreground="Gray" />
             <TextBox Margin="8,0,0,0"
-                     Text="{Binding GetSetSomeText,Mode=TwoWay,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{Binding GetSomeText}" />
+                     TextChanged="UpdateGetSetSomeText"
+                     Text="{Binding GetSetSomeText,Mode=OneWay,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="{Binding GetSetSomeText}" />
             <TextBlock Margin="0,16,0,0" Text="All errors:" Foreground="Gray" />
             <ItemsControl ItemsSource="{Binding GetAllErrorMessages}" Foreground="DarkRed"></ItemsControl>
-        </StackPanel>
-        <StackPanel Grid.Column="1">
-            <TextBlock Margin="0,16,0,0" Text="Change some text (Changes on unfocus)" />
-            <TextBox Text="{Binding GetSetSomeTextUnfocus}" />
-            <TextBlock Text="{Binding GetSetSomeTextUnfocus}" />
-            <TextBlock Margin="0,32,0,0" TextWrapping="Wrap" Foreground="Maroon">This is the problem, property changed is not waiting for propertychanged. It immediatly calls the getter and gets wrong value since our vm is async</TextBlock>
-            <TextBox Text="{Binding GetSetSomeText2,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            
-            <TextBlock Foreground="Chocolate" TextWrapping="Wrap" Margin="0,32,0,0" Text="We can address this problem with OneWay mode and TextChanged event"/>
-            <TextBox Text="{Binding GetSetSomeText2,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBoxBase_OnTextChanged" />
         </StackPanel>
     </Grid>
 </Window>
