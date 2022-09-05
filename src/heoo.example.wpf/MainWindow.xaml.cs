@@ -23,6 +23,7 @@ namespace heoo.example.wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ExampleApp.ExampleVM Vm => this.DataContext as ExampleApp.ExampleVM;
         public MainWindow()
         {
             InitializeComponent();
@@ -39,6 +40,11 @@ namespace heoo.example.wpf
         {
             //Probably not necessary since everything else dies. 
             (ExampleApp.ElmishProgram as IDisposable)?.Dispose();
+        }
+
+        private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Vm.GetSetSomeText2 = ((TextBox)sender).Text;
         }
     }
 }

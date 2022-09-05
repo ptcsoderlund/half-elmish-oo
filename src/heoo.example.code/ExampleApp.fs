@@ -4,13 +4,14 @@ open System
 open heoo.lib
 
 //Lets just make a counter app for demoing purpose
-type Model = { SomeText: string; SomeTextUnfocus:string; Counter: int }
+type Model = { SomeText: string;SomeTextTake2:string; SomeTextUnfocus:string; Counter: int }
 
 type Message =
     | Increase
     | Decrease
     | Reset
     | SetText of string
+    | SetTextTake2 of string
     | SetTextUnfocus of string
 
 
@@ -21,7 +22,8 @@ let Update model message =
     | Reset -> { model with Counter = 0 }
     | SetText text -> { model with SomeText = text }
     | SetTextUnfocus s -> {model with SomeTextUnfocus=s}
-
+    | SetTextTake2 s -> {model with SomeTextTake2=s}
+    
 type ExampleVM(initialModel, messageDispatch) =
     inherit ViewModelBase.T<Model, Message>(initialModel)
     let mutable someTextExpected = ""
@@ -51,6 +53,14 @@ type ExampleVM(initialModel, messageDispatch) =
         and set v =
             someTextExpected <- v
             messageDispatch(SetText v)
+    member this.GetSetSomeText2
+        with get() =
+            this.getPropertyValue(
+                fun model -> model.SomeTextTake2
+                )
+        and set v =
+            messageDispatch(SetTextTake2 v)
+            
     member this.GetSetSomeTextUnfocus
         with get() =
             this.getPropertyError(
@@ -66,6 +76,7 @@ type ExampleVM(initialModel, messageDispatch) =
             v
             |> SetTextUnfocus
             |> messageDispatch
+    
     member this.GetAllErrorMessages
         with get():string [] =
             this.getPropertyValue(fun model ->
@@ -84,7 +95,7 @@ type ExampleVM(initialModel, messageDispatch) =
             CommandBase.T((fun _ -> model.Counter <> 0), (fun _ -> Reset |> messageDispatch)))
 
 let initialModel =
-    { SomeText = "Change me"; SomeTextUnfocus="Change me too" ;Counter = 1 }
+    { SomeText = "Change me"; SomeTextTake2="Change me 2";SomeTextUnfocus="Change me too" ;Counter = 1 }
   
 //Remember to bind ElmishProgram.OnNewModel to the vm or vm wont update.
 let ElmishProgram = ElmishProgramAsync.T(initialModel,Update)
