@@ -52,7 +52,7 @@ type T<'ModelT, 'MessageT>(initialModel: 'ModelT) =
         //Somewhat guarded against null values, but plz avoid them at all costs.
         propertyGetters.Keys
         |> Seq.iter (fun key ->
-            let getfunc = propertyGetters[key]
+            let getfunc = propertyGetters.[key]
 
             let nullAsNone (item: obj) = if item = null then None else Some item
 
@@ -81,6 +81,6 @@ type T<'ModelT, 'MessageT>(initialModel: 'ModelT) =
         member this.Item
             with get columnName =
                 if propertyErrors.ContainsKey(columnName) then
-                    propertyErrors[columnName](currentModel)
+                    propertyErrors.[columnName](currentModel)
                 else
                     System.String.Empty

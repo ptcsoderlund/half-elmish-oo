@@ -101,3 +101,11 @@ let initialModel =
 let ElmishProgram = ElmishProgramAsync.T(initialModel,Update)
 
 let SingletonVm = ExampleVM(initialModel,ElmishProgram.PostMessage)
+ElmishProgram.OnModelUpdated <-
+    Action<Model>(
+        fun m ->
+            //This is a good place to invoke on gui thread.
+            //example: Dispatcher.Invoke(SingletonVm.updateModel m)
+            SingletonVm.updateModel m
+        )
+    |> Some
