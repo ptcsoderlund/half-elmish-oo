@@ -5,7 +5,7 @@ I want to create elmish program loops (message processing loops) with a simple c
 
 ## Example
 ### Step1 - Design your program
-```fsharp
+```F#
 open heoo.lib
 open System
 
@@ -27,7 +27,7 @@ let Update  (model:Model) (msg:Message) =
    
 ```
 ### Step2 - Create your viewmodel 
-```fsharp
+```F#
 type MyVm(initialModel,messageCallback) =
     inherit ViewModelBase.T<Model,Message>(initialModel)
     
@@ -70,7 +70,7 @@ type MyVm(initialModel,messageCallback) =
 ```
 
 ### Step3 - Instantiate your program loop and viewmodel
-```fsharp
+```F#
 
 let initialModel = { Count = 0; SomeText = "Hello World" }
 let program = ElmishProgramAsync.T(initialModel,Update)
@@ -80,7 +80,7 @@ let viewModelInstance = MyVm(initialModel,program.PostMessage)
 
 ```
 ### Step3.1 - wire OnModelUpdated to viewmodel
-```fsharp
+```F#
 //Remember to wire your programs OnModelUpdated action to your viewmodel
 //It might be a good idea to not write this here and move it into your gui application instead.
 program.OnModelUpdated <- 

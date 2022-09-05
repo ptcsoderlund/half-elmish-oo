@@ -12,9 +12,9 @@
         <FileVersion>1.0.0</FileVersion>
         <PackageVersion>1.0.0-rc</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Description>F# library for creating an async elmish (message processing) loop.
-Build viewmodels on top. Not tied to any dsl or gui system.
-Can potentially be implemented in any app.</Description>
+        <Description>F# half elmish async program loop and viewmodels.
+Can potentially be used in any GUI (or graphics?) app.
+Where the viewmodels is the glue between graphics and logic.</Description>
         <RepositoryUrl>https://github.com/ptcsoderlund/half-elmish-oo</RepositoryUrl>
         <Version>1.0.0-rc</Version>
         <PackageTags>F#;FSharp;Elmish</PackageTags>
