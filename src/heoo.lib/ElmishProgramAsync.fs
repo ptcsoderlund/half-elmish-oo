@@ -18,9 +18,12 @@ type T<'ModelT,'MessageT>(initialModel:'ModelT,updateFun:'ModelT -> 'MessageT ->
         match message with
         | ProgramInstruction messageT ->
             let newModel = updateFun model messageT
-            match onModelUpdated with
-            | Some x -> x.Invoke(newModel)
-            | None -> ()
+            //There might be an overhead on onModelUpdated. So we should process all messages before calling it, else it might get flooded?
+            //If queue got one message it might be a dispose message. So we can hold on to it until after onModelUpdated.
+            if inbox.CurrentQueueLength < 2 then
+                match onModelUpdated with
+                | Some x -> x.Invoke(newModel)
+                | None -> ()
             return! programLoop inbox newModel
         | Dispose -> _isDisposed <- true
         if _isDisposed |> not then
@@ -28,7 +31,7 @@ type T<'ModelT,'MessageT>(initialModel:'ModelT,updateFun:'ModelT -> 'MessageT ->
     }
     
     let mBoxProcessor = MailboxProcessor.Start(fun inbox -> programLoop inbox initialModel)
-    member this.AsIDisposable() = this :> IDisposable  
+    member this.AsIDisposable() = this :> IDisposable
     member _.PostMessage mess = mBoxProcessor.Post(ProgramInstruction mess)
     member this.OnModelUpdated
         with get() = onModelUpdated
