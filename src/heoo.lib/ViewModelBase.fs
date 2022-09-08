@@ -9,7 +9,7 @@ open System.Runtime.CompilerServices
 /// Wire ElmishProgramAsync.OnModelUpdated into T.updateModel.
 /// Also use ElmishProgramAsync.PostMessage in setters.
 [<AbstractClass>]
-type T<'ModelT, 'MessageT>(initialModel: 'ModelT) =
+type T<'ModelT >(initialModel: 'ModelT) =
     //INotifyPropertychanged
     let propEv = Event<_, _>()
 
