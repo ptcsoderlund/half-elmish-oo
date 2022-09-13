@@ -98,7 +98,7 @@ program.OnModelUpdated <-
 ### Step4 - Consume your viewmodel
 
 Consume your viewmodel in your application (wpf, Winforms, Avalonia, MAUI.net,Uno, Unity3D etc)
-As you would with any other INotifyPropertyChanged, IDataErrorInfo, ICommand implementation.
+As you would with any other INotifyPropertyChanged,INotifyDataErrorInfo, IDataErrorInfo, ICommand implementation.
 
 ### Additional comments
 
