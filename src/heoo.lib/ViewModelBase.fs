@@ -12,7 +12,7 @@ open System.Runtime.CompilerServices
 type T<'ModelT >(initialModel: 'ModelT) =
     //INotifyPropertychanged
     let propEv = Event<_, _>()
-
+    let errorEv = Event<_, _>()
     let propertyGetters =
         ConcurrentDictionary<string, 'ModelT -> obj>()
 
@@ -64,6 +64,10 @@ type T<'ModelT >(initialModel: 'ModelT) =
                 | (Some x, Some y) -> x.Equals(y) |> not
                 | _ -> a.Equals(b) |> not
             then
+                //Make sense to trigger error event here, error text could have changed.
+                //Might optimize by checking if it has actually changed, which is suspect can cause overhead and defeat its purpose.
+                if propertyErrors.ContainsKey(key) then
+                    errorEv.Trigger(this, DataErrorsChangedEventArgs(key))
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
     member this.AsInotifyPropertyChanged
         with get() = this :> INotifyPropertyChanged
@@ -84,3 +88,15 @@ type T<'ModelT >(initialModel: 'ModelT) =
                     propertyErrors.[columnName](currentModel)
                 else
                     System.String.Empty
+    
+    interface INotifyDataErrorInfo with
+        member this.HasErrors
+            with get() = propertyErrors.Values |> Seq.filter(fun v -> v(currentModel) <> System.String.Empty) |> Seq.isEmpty |> not 
+
+        member this.GetErrors(columnName) =
+            if (propertyErrors.ContainsKey(columnName) && propertyErrors.[columnName](currentModel) <> "" ) then
+                [ propertyErrors.[columnName](currentModel) ]
+            else
+                []
+        [<CLIEvent>]
+        member this.ErrorsChanged = errorEv.Publish 
