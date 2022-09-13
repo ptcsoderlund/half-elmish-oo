@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:code="clr-namespace:heoo.example.code;assembly=heoo.example.code"
         xmlns:local="clr-namespace:heoo.example.wpf"
-        xmlns:wpf="clr-namespace:heoo.example.wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         DataContext="{x:Static code:ExampleApp.viewModelInstance}"
@@ -21,8 +20,8 @@
             <TextBlock Text="Change some text (empty is invalid): " Foreground="Gray" />
             <TextBox Margin="8,0,0,0"
                      TextChanged="UpdateGetSetSomeText"
-                     Text="{Binding GetSetSomeText,Mode=OneWay,ValidatesOnDataErrors=True,UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{Binding GetSetSomeText}" />
+                     Text="{Binding GetSetSomeText,Mode=OneWay,ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="{Binding GetSetSomeText,ValidatesOnNotifyDataErrors=False}" />
             <TextBlock Margin="0,16,0,0" Text="All errors:" Foreground="Gray" />
             <ItemsControl ItemsSource="{Binding GetAllErrorMessages}" Foreground="DarkRed"></ItemsControl>
         </StackPanel>

@@ -6,6 +6,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "heoo.example.code", "heoo.e
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heoo.example.wpf", "heoo.example.wpf\heoo.example.wpf.csproj", "{A46453A3-8867-4A55-93AB-DFCDC2A09B55}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "heoo.example.avalonia", "heoo.example.avalonia\heoo.example.avalonia.fsproj", "{BA8A4B9C-9FB1-4724-9697-67236CEF21BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{A46453A3-8867-4A55-93AB-DFCDC2A09B55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A46453A3-8867-4A55-93AB-DFCDC2A09B55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A46453A3-8867-4A55-93AB-DFCDC2A09B55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA8A4B9C-9FB1-4724-9697-67236CEF21BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA8A4B9C-9FB1-4724-9697-67236CEF21BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA8A4B9C-9FB1-4724-9697-67236CEF21BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA8A4B9C-9FB1-4724-9697-67236CEF21BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

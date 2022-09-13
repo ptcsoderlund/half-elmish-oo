@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:code="clr-namespace:heoo.example.code;assembly=heoo.example.code"
+        x:Class="heoo.example.avalonia.MainWindow"
+        
+        Title="heoo.example.avalonia"
+        DataContext="{x:Static code:ExampleApp.viewModelInstance}">
+    <Grid>
+            <StackPanel>
+            <TextBlock Margin="0,16,0,0" Text="Counter text: " Foreground="Gray" />
+            <TextBlock Margin="8,0,0,0" Text="{Binding GetCounter}" />
+            <Button Command="{Binding IncreaseCmd}">Increase</Button>
+            <Button Command="{Binding DecreaseCmd}">Decrease</Button>
+            <Button Command="{Binding ResetCmd}">Reset</Button>
+            <TextBlock Text="Change some text (empty is invalid): " Foreground="Gray" />
+            <TextBox  Margin="8,0,0,0"
+                     Text="{Binding GetSetSomeText,Mode=TwoWay}"  
+                     
+                     />
+            <TextBlock Text="{Binding GetSetSomeText}" />
+            <TextBlock Text="{Binding this[GetSetSomeText]}" Foreground="Maroon" />
+            <TextBlock Margin="0,16,0,0" Text="All errors:" Foreground="Gray" />
+            <ItemsControl Items="{Binding GetAllErrorMessages}" Foreground="DarkRed"></ItemsControl>
+            </StackPanel>
+        </Grid>
+</Window>
