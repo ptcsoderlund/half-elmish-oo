@@ -69,10 +69,13 @@ type T<'ModelT >(initialModel: 'ModelT) =
                 if propertyErrors.ContainsKey(key) then
                     errorEv.Trigger(this, DataErrorsChangedEventArgs(key))
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
-    member this.AsInotifyPropertyChanged
+    member this.AsINotifyPropertyChanged
         with get() = this :> INotifyPropertyChanged
     member this.AsIDataErrorInfo
         with get() = this :> IDataErrorInfo
+        
+    member this.AsINotifyDataErrorInfo
+        with get() = this :> INotifyDataErrorInfo
     interface INotifyPropertyChanged with
 
         [<CLIEvent>]
