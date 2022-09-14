@@ -8,9 +8,9 @@
         <PackageProjectUrl>https://github.com/ptcsoderlund/half-elmish-oo</PackageProjectUrl>
         <PackageLicenseUrl></PackageLicenseUrl>
         <Company>N/A</Company>
-        <AssemblyVersion>1.1.1</AssemblyVersion>
-        <FileVersion>1.1.1</FileVersion>
-        <PackageVersion>1.1.1-rc</PackageVersion>
+        <AssemblyVersion>1.1.2</AssemblyVersion>
+        <FileVersion>1.1.2</FileVersion>
+        <PackageVersion>1.1.2-rc</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Description>F# half elmish async program loop and viewmodels.
 Can potentially be used in any GUI (or graphics?) app.
@@ -19,7 +19,8 @@ Where the viewmodels is the glue between graphics and logic.</Description>
         <Version>1.0.0-rc</Version>
         <PackageTags>F#;FSharp;Elmish</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReleaseNotes>Minor api change in viewmodelbase. New implementation for INotifyDataErrorInfo</PackageReleaseNotes>
+        <PackageReleaseNotes>Property getters memoized now.
+API is intact.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
