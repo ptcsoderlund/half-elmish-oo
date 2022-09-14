@@ -68,11 +68,11 @@ type T<'ModelT >(initialModel: 'ModelT) =
                 | (Some x, Some y) -> x.Equals(y) |> not
                 | _ -> currentValueSafe.Equals(newValueSafe) |> not
             then
+                propertyGetterValues.[key] <- newValue
                 //Make sense to trigger error event here, error text could have changed.
                 //Might optimize by checking if it has actually changed, which is suspect can cause overhead and defeat its purpose.
                 if propertyErrorsFuncs.ContainsKey(key) then
                     errorEv.Trigger(this, DataErrorsChangedEventArgs(key))
-                propertyGetterValues.[key] <- newValue
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
     member this.AsINotifyPropertyChanged
         with get() = this :> INotifyPropertyChanged

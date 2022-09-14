@@ -7,7 +7,7 @@
         x:Class="heoo.example.avalonia.MainWindow"
         
         Title="heoo.example.avalonia"
-        DataContext="{x:Static code:ExampleApp.viewModelInstance}">
+        >
     <Grid>
             <StackPanel>
             <TextBlock Margin="0,16,0,0" Text="Counter text: " Foreground="Gray" />
