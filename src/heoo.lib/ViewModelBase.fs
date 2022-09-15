@@ -9,14 +9,15 @@ open System.Runtime.CompilerServices
 /// Wire ElmishProgramAsync.OnModelUpdated into T.updateModel.
 /// Also use ElmishProgramAsync.PostMessage in setters.
 [<AbstractClass>]
-type T<'ModelT >(initialModel: 'ModelT) =
+type T<'ModelT>(initialModel: 'ModelT) =
     //INotifyPropertychanged
     let propEv = Event<_, _>()
     let errorEv = Event<_, _>()
-    let propertyGetterFuncs =
+
+    let propertyGetters =
         ConcurrentDictionary<string, 'ModelT -> obj>()
-    let propertyGetterValues = ConcurrentDictionary<string,obj>()
-    let propertyErrorsFuncs =
+
+    let propertyErrors =
         ConcurrentDictionary<string, 'ModelT -> string>()
 
     let mutable currentModel = initialModel
@@ -24,63 +25,62 @@ type T<'ModelT >(initialModel: 'ModelT) =
     member _.getPropertyValue<'T>(getFunc: 'ModelT -> 'T, [<CallerMemberName>] ?propertyName) =
         match propertyName with
         | Some pName ->
-            match propertyGetterValues.TryGetValue pName with
-            | true, value -> value :?> 'T
-            | false, _ ->
-                //this should be the first time run
-                let wrapper =
-                    fun modelX -> getFunc (modelX) :> obj
-                let valueT:'T = getFunc(currentModel) 
-                propertyGetterFuncs.TryAdd(pName, wrapper) |> ignore
-                propertyGetterValues.TryAdd(pName,valueT :> obj) |> ignore
-                valueT
+            let wrapper =
+                fun modelX -> getFunc (modelX) :> obj
+
+            propertyGetters.TryAdd(pName, wrapper) |> ignore
+            getFunc (currentModel)
         | _ -> failwith "propertyName cant be null when setting values"
 
     member _.getPropertyError(getFunc: 'ModelT -> string, [<CallerMemberName>] ?propertyName) =
         match propertyName with
-        | Some pName -> propertyErrorsFuncs.TryAdd(pName, getFunc) |> ignore
+        | Some pName -> propertyErrors.TryAdd(pName, getFunc) |> ignore
         | _ -> failwith "propertyName cant be null when setting errors"
 
     abstract member updateModel: 'ModelT -> unit
     //Get all errors as (propertyName, errorMessage) tuple.
     member this.GetErrorsArray() =
-        propertyErrorsFuncs.ToArray()
+        propertyErrors.ToArray()
         |> Array.map (fun x -> (x.Key, x.Value))
 
     default this.updateModel(newModel: 'ModelT) =
         if (newModel :> obj) = null then
             failwith "null is toxic, dont pass it in"
 
+        let oldModel = currentModel
         currentModel <- newModel
         //Run all functions in all properties and trigger notification when changed.
         //Somewhat guarded against null values, but plz avoid them at all costs.
-        propertyGetterFuncs.Keys
+        propertyGetters.Keys
         |> Seq.iter (fun key ->
-            let getfunc = propertyGetterFuncs.[key]
-            let currentValue = propertyGetterValues.[key]
-            let nullAsNone (item: obj) = if item = null then None else Some item
-            let newValue = getfunc newModel 
+            let getfunc = propertyGetters.[key]
 
-            let currentValueSafe = currentValue |> nullAsNone
-            let newValueSafe = newValue |> nullAsNone
+            let nullAsNone (item: obj) = if item = null then None else Some item
+
+            let a = getfunc (oldModel) |> nullAsNone
+            let b = getfunc (currentModel) |> nullAsNone
+
             if
-                match (currentValueSafe, newValueSafe) with
+                match (a, b) with
                 | (Some x, Some y) -> x.Equals(y) |> not
-                | _ -> currentValueSafe.Equals(newValueSafe) |> not
+                | _ -> a.Equals(b) |> not
             then
-                propertyGetterValues.[key] <- newValue
                 //Make sense to trigger error event here, error text could have changed.
                 //Might optimize by checking if it has actually changed, which is suspect can cause overhead and defeat its purpose.
-                if propertyErrorsFuncs.ContainsKey(key) then
+                if propertyErrors.ContainsKey(key) then
                     errorEv.Trigger(this, DataErrorsChangedEventArgs(key))
+
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
-    member this.AsINotifyPropertyChanged
-        with get() = this :> INotifyPropertyChanged
-    member this.AsIDataErrorInfo
-        with get() = this :> IDataErrorInfo
-        
-    member this.AsINotifyDataErrorInfo
-        with get() = this :> INotifyDataErrorInfo
+
+    member this.AsINotifyPropertyChanged =
+        this :> INotifyPropertyChanged
+
+    member this.AsIDataErrorInfo =
+        this :> IDataErrorInfo
+
+    member this.AsINotifyDataErrorInfo =
+        this :> INotifyDataErrorInfo
+
     interface INotifyPropertyChanged with
 
         [<CLIEvent>]
@@ -92,19 +92,24 @@ type T<'ModelT >(initialModel: 'ModelT) =
 
         member this.Item
             with get columnName =
-                if propertyErrorsFuncs.ContainsKey(columnName) then
-                    propertyErrorsFuncs.[columnName](currentModel)
+                if propertyErrors.ContainsKey(columnName) then
+                    propertyErrors.[columnName] (currentModel)
                 else
                     System.String.Empty
-    
+
     interface INotifyDataErrorInfo with
-        member this.HasErrors
-            with get() = propertyErrorsFuncs.Values |> Seq.filter(fun v -> v(currentModel) <> System.String.Empty) |> Seq.isEmpty |> not 
+        member this.HasErrors =
+            propertyErrors.Values
+            |> Seq.filter (fun v -> v (currentModel) <> System.String.Empty)
+            |> Seq.isEmpty
+            |> not
 
         member this.GetErrors(columnName) =
-            if (propertyErrorsFuncs.ContainsKey(columnName) && propertyErrorsFuncs.[columnName](currentModel) <> "" ) then
-                [ propertyErrorsFuncs.[columnName](currentModel) ]
+            if (propertyErrors.ContainsKey(columnName)
+                && propertyErrors.[columnName] (currentModel) <> "") then
+                [ propertyErrors.[columnName] (currentModel) ]
             else
                 []
+
         [<CLIEvent>]
-        member this.ErrorsChanged = errorEv.Publish 
+        member this.ErrorsChanged = errorEv.Publish

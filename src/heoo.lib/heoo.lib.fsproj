@@ -10,7 +10,7 @@
         <Company>N/A</Company>
         <AssemblyVersion>1.1.2</AssemblyVersion>
         <FileVersion>1.1.2</FileVersion>
-        <PackageVersion>1.1.2-rc</PackageVersion>
+        <PackageVersion>1.1.3-rc</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Description>F# half elmish async program loop and viewmodels.
 Can potentially be used in any GUI (or graphics?) app.
@@ -19,8 +19,8 @@ Where the viewmodels is the glue between graphics and logic.</Description>
         <Version>1.0.0-rc</Version>
         <PackageTags>F#;FSharp;Elmish</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReleaseNotes>Property getters memoized now.
-API is intact.</PackageReleaseNotes>
+        <PackageReleaseNotes>Removed memoization. Decision was made on wrong grounds.
+API, intact. It's up to the consumer to keep viewmodel layer against elmish model light.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
