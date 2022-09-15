@@ -9,10 +9,12 @@ open heoo.example.code
 type MainWindow () as this = 
     inherit Window ()
 
+    
     do
+        this.DataContext <- ExampleApp.viewModelInstance
         this.InitializeComponent()
         ExampleApp.program.OnModelUpdated <- System.Action<ExampleApp.Model>(this.OnModelUpdated) |> Some
-        
+    
     member private this.vm= this.DataContext :?> ExampleApp.MyVm 
     member private this.OnModelUpdated (model: ExampleApp.Model) =
         if Dispatcher.UIThread.CheckAccess() |> not then
@@ -20,7 +22,10 @@ type MainWindow () as this =
             |> ignore
         else
             this.vm.updateModel model
-        
+            
+       
+    member this.TextBox_TextChanged aProps =
+        ()
     member private this.InitializeComponent() =
 #if DEBUG
         this.AttachDevTools()
