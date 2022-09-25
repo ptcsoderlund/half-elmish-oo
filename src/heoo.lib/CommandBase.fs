@@ -7,8 +7,7 @@ type ExecuteType = obj option -> unit
 ///ICommand wrapper for buttons and stuff that needs to know if a command can execute.
 type T(canExecute:CanExecuteType,execute:ExecuteType) =
     let canExecuteChangedEv = Event<_,_>()
-    member this.AsICommand
-        with get() = this :> ICommand
+    member this.AsICommand = this :> ICommand
     interface ICommand with
         member this.CanExecute(parameter) =
             if parameter = null then
