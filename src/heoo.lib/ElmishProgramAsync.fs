@@ -31,7 +31,7 @@ type T<'ModelT,'MessageT>(initialModel:'ModelT,updateFun:'ModelT -> 'MessageT ->
     }
     
     let mBoxProcessor = MailboxProcessor.Start(fun inbox -> programLoop inbox initialModel)
-    member this.AsIDisposable() = this :> IDisposable
+    member this.AsIDisposable = this :> IDisposable
     member _.PostMessage mess = mBoxProcessor.Post(ProgramInstruction mess)
     member this.OnModelUpdated
         with get() = onModelUpdated
