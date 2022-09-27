@@ -13,7 +13,9 @@ type T<'ModelT>(initialModel: 'ModelT) =
     //INotifyPropertychanged
     let propEv = Event<_, _>()
     let errorEv = Event<_, _>()
-
+    //Last model update values.
+    //Need to store them so we can compare and trigger property changed events.
+    let lastUpdatedPropertyValues = ConcurrentDictionary<string, obj>()
     let propertyGetters =
         ConcurrentDictionary<string, 'ModelT -> obj>()
 
@@ -27,8 +29,8 @@ type T<'ModelT>(initialModel: 'ModelT) =
         | Some pName ->
             let wrapper =
                 fun modelX -> getFunc (modelX) :> obj
-
-            propertyGetters.TryAdd(pName, wrapper) |> ignore
+            if propertyGetters.ContainsKey pName |> not then
+                propertyGetters.TryAdd(pName, wrapper) |> ignore
             getFunc (currentModel)
         | _ -> failwith "propertyName cant be null when setting values"
 
@@ -54,22 +56,29 @@ type T<'ModelT>(initialModel: 'ModelT) =
         propertyGetters.Keys
         |> Seq.iter (fun key ->
             let getfunc = propertyGetters.[key]
-
+            let lastValueExists = lastUpdatedPropertyValues.ContainsKey(key)
             let nullAsNone (item: obj) = if item = null then None else Some item
 
-            let a = getfunc (oldModel) |> nullAsNone
-            let b = getfunc (currentModel) |> nullAsNone
-
+            let newValue_op = getfunc (currentModel) |> nullAsNone
+            
+            //We trigger event if last value doesnt exist, or if it does and its different.
+            let triggerEvent =
+                match (lastValueExists, newValue_op) with
+                | (true, Some newValue) ->
+                    if lastUpdatedPropertyValues.[key].Equals(newValue) |> not then
+                        lastUpdatedPropertyValues[key] <- newValue
+                        true 
+                    else false 
+                | (false, Some newValue) -> lastUpdatedPropertyValues.TryAdd(key, newValue)
+                | (_, None) -> false//We dont show support to null
             if
-                match (a, b) with
-                | (Some x, Some y) -> x.Equals(y) |> not
-                | _ -> a.Equals(b) |> not
+                triggerEvent
             then
                 //Make sense to trigger error event here, error text could have changed.
                 //Might optimize by checking if it has actually changed, which is suspect can cause overhead and defeat its purpose.
                 if propertyErrors.ContainsKey(key) then
                     errorEv.Trigger(this, DataErrorsChangedEventArgs(key))
-
+                
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
 
     member this.AsINotifyPropertyChanged =
