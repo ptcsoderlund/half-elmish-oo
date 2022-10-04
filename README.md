@@ -29,7 +29,7 @@ let Update  (model:Model) (msg:Message) =
 ### Step2 - Create your viewmodel 
 ```F#
 type MyVm(initialModel,messageCallback) =
-    inherit ViewModelBase.T<Model,Message>(initialModel)
+    inherit ViewModelBase.T<Model>(initialModel)
     
     //Remember that this is async.
     //Wait for InotifyPropertyChanged until getter is properly updated.
