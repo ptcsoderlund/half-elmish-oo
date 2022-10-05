@@ -1,7 +1,7 @@
 # half-elmish-oo
 
-This library is kind of experimental.
 I want to create elmish program loops (message processing loops) with a simple callback.
+
 
 ## Example
 ### Step1 - Design your program
@@ -105,4 +105,9 @@ As you would with any other INotifyPropertyChanged,INotifyDataErrorInfo, IDataEr
 It should  be no problem to create more elmishprograms to avoid the whole monolithic approach.
 It's also possible to have multiple viewmodels from one program.
 I'm trying to leave the door open for more advanced scenarios.  
-Where you as a consumer is in control.
+Where you as a consumer is in control.  
+
+Don't mistake my absence for abandonment.  
+This library is complete and stable and will stand the test of time.  
+heoo.lib isnt about running fast or optimizing, its only a layer between logic and ui.
+I use it in my own products which are planned to run for 10+ years.

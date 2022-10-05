@@ -8,9 +8,9 @@
         <PackageProjectUrl>https://github.com/ptcsoderlund/half-elmish-oo</PackageProjectUrl>
         <PackageLicenseUrl></PackageLicenseUrl>
         <Company>N/A</Company>
-        <AssemblyVersion>1.2.1</AssemblyVersion>
-        <FileVersion>1.2.1</FileVersion>
-        <PackageVersion>1.2.1</PackageVersion>
+        <AssemblyVersion>1.2.2</AssemblyVersion>
+        <FileVersion>1.2.2</FileVersion>
+        <PackageVersion>1.2.2</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Description>F# half elmish async program loop and viewmodels.
 Can potentially be used in any GUI (or graphics?) app.
@@ -19,7 +19,9 @@ Where the viewmodels is the glue between graphics and logic.</Description>
         <Version>1.0.0-rc</Version>
         <PackageTags>F#;FSharp;Elmish</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReleaseNotes>Caching properties in viewmodels so we can properly trigger propertychanged between model updates.</PackageReleaseNotes>
+        <PackageReleaseNotes>Updated readme.
+Thats all.</PackageReleaseNotes>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <ItemGroup>
