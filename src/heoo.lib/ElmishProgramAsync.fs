@@ -12,25 +12,20 @@ type private programMessage<'ModelT,'MessageT> =
 type T<'ModelT,'MessageT>(initialModel:'ModelT,updateFun:'ModelT -> 'MessageT -> 'ModelT) =
     let mutable onModelUpdated: Action<'ModelT> option = None
     let mutable _isDisposed:bool = false
-    
-    let rec programLoop (inbox:MailboxProcessor<programMessage<'ModelT,'MessageT>>) model = async {
-        let! message = inbox.Receive()
-        match message with
-        | ProgramInstruction messageT ->
-            let newModel = updateFun model messageT
-            //There might be an overhead on onModelUpdated. So we should process all messages before calling it, else it might get flooded?
-            //If queue got one message it might be a dispose message. So we can hold on to it until after onModelUpdated.
-            if inbox.CurrentQueueLength < 2 then
+    let mutable _model = initialModel
+    let programLoop (inbox:MailboxProcessor<programMessage<'ModelT,'MessageT>>) = async {
+        while _isDisposed |> not do
+            let! message = inbox.Receive()
+            match message with
+            | ProgramInstruction messageT ->
+                _model <- updateFun _model messageT
                 match onModelUpdated with
-                | Some x -> x.Invoke(newModel)
+                | Some x -> x.Invoke(_model)
                 | None -> ()
-            return! programLoop inbox newModel
-        | Dispose -> _isDisposed <- true
-        if _isDisposed |> not then
-            return! programLoop inbox model
+            | Dispose -> _isDisposed <- true
     }
     
-    let mBoxProcessor = MailboxProcessor.Start(fun inbox -> programLoop inbox initialModel)
+    let mBoxProcessor = MailboxProcessor.Start(fun inbox -> programLoop inbox)
     member this.AsIDisposable = this :> IDisposable
     member _.PostMessage mess = mBoxProcessor.Post(ProgramInstruction mess)
     member this.OnModelUpdated

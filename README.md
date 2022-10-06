@@ -73,7 +73,7 @@ type MyVm(initialModel,messageCallback) =
 ```F#
 
 let initialModel = { Count = 0; SomeText = "Hello World" }
-let program = ElmishProgramAsync.T(initialModel,Update)
+let program = new ElmishProgramAsync.T<Model,Message>(initialModel,Update)
 //WARNING!, once you call (IDisposable)Dispose() on the program loop, you can't use it anymore.
 //like this: program.AsIDisposable().Dispose()
 let viewModelInstance = MyVm(initialModel,program.PostMessage)
