@@ -65,7 +65,7 @@ type T<'ModelT>(initialModel: 'ModelT) =
             let triggerEvent =
                 match (lastValueExists, newValue_op) with
                 | (true, Some newValue) ->
-                    if lastUpdatedPropertyValues.[key].Equals(newValue) |> not then
+                    if LanguagePrimitives.GenericEquality lastUpdatedPropertyValues.[key] newValue |> not then
                         lastUpdatedPropertyValues[key] <- newValue
                         true 
                     else false 
