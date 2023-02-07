@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Title>Half elmish OO</Title>
         <Copyright>ptcsoderlund@gmail.com</Copyright>
         <PackageProjectUrl>https://github.com/ptcsoderlund/half-elmish-oo</PackageProjectUrl>
         <PackageLicenseUrl></PackageLicenseUrl>
         <Company>N/A</Company>
-        <AssemblyVersion>1.2.4</AssemblyVersion>
-        <FileVersion>1.2.4</FileVersion>
-        <PackageVersion>1.2.4</PackageVersion>
+        <AssemblyVersion>1.2.5</AssemblyVersion>
+        <FileVersion>1.2.5</FileVersion>
+        <PackageVersion>1.2.5</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Description>F# half elmish async program loop and viewmodels.
 Can potentially be used in any GUI (or graphics?) app.
 Where the viewmodels is the glue between graphics and logic.</Description>
         <RepositoryUrl>https://github.com/ptcsoderlund/half-elmish-oo</RepositoryUrl>
-        <Version>1.0.0-rc</Version>
+        <Version>1.2.5</Version>
         <PackageTags>F#;FSharp;Elmish</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReleaseNotes>Better equality comparing. Meaning INotifyPropertyChanged wont spam trigger.
 Remember to override Equality and GetHashCode on class types. This comes for free in records.</PackageReleaseNotes>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Authors>ptcsoderlund</Authors>
     </PropertyGroup>
 
     <ItemGroup>
