@@ -130,5 +130,5 @@ type T<'ModelT>(initialModel: 'ModelT) =
             let thisModel = this.currentModel :> obj
             let result =  otherModel.Equals(thisModel)
             result
-        | _ -> false
+        | otherO -> (this.currentModel :> obj).Equals(otherO)
     override this.GetHashCode() = (this.currentModel :> obj).GetHashCode()
