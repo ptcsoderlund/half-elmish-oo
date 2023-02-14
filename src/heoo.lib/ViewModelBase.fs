@@ -22,16 +22,16 @@ type T<'ModelT>(initialModel: 'ModelT) =
     let propertyErrors =
         ConcurrentDictionary<string, 'ModelT -> string>()
 
-    let mutable currentModel = initialModel
+    member val private currentModel = initialModel with get,set 
 
-    member _.getPropertyValue<'T>(getFunc: 'ModelT -> 'T, [<CallerMemberName>] ?propertyName) =
+    member x.getPropertyValue<'T>(getFunc: 'ModelT -> 'T, [<CallerMemberName>] ?propertyName) =
         match propertyName with
         | Some pName ->
             let wrapper =
                 fun modelX -> getFunc (modelX) :> obj
             if propertyGetters.ContainsKey pName |> not then
                 propertyGetters.TryAdd(pName, wrapper) |> ignore
-            getFunc (currentModel)
+            getFunc (x.currentModel)
         | _ -> failwith "propertyName cant be null when setting values"
 
     member _.getPropertyError(getFunc: 'ModelT -> string, [<CallerMemberName>] ?propertyName) =
@@ -49,8 +49,8 @@ type T<'ModelT>(initialModel: 'ModelT) =
         if (newModel :> obj) = null then
             failwith "null is toxic, dont pass it in"
 
-        let oldModel = currentModel
-        currentModel <- newModel
+        let oldModel = this.currentModel
+        this.currentModel <- newModel
         //Run all functions in all properties and trigger notification when changed.
         //Somewhat guarded against null values, but plz avoid them at all costs.
         propertyGetters.Keys
@@ -59,7 +59,7 @@ type T<'ModelT>(initialModel: 'ModelT) =
             let lastValueExists = lastUpdatedPropertyValues.ContainsKey(key)
             let nullAsNone (item: obj) = if item = null then None else Some item
 
-            let newValue_op = getfunc (currentModel) |> nullAsNone
+            let newValue_op = getfunc (this.currentModel) |> nullAsNone
             
             //We trigger event if last value doesnt exist, or if it does and its different.
             let triggerEvent =
@@ -80,7 +80,7 @@ type T<'ModelT>(initialModel: 'ModelT) =
                     errorEv.Trigger(this, DataErrorsChangedEventArgs(key))
                 
                 propEv.Trigger(this, PropertyChangedEventArgs(key)))
-
+        
     member this.AsINotifyPropertyChanged =
         this :> INotifyPropertyChanged
 
@@ -102,23 +102,33 @@ type T<'ModelT>(initialModel: 'ModelT) =
         member this.Item
             with get columnName =
                 if propertyErrors.ContainsKey(columnName) then
-                    propertyErrors.[columnName] (currentModel)
+                    propertyErrors.[columnName] (this.currentModel)
                 else
                     System.String.Empty
 
     interface INotifyDataErrorInfo with
         member this.HasErrors =
             propertyErrors.Values
-            |> Seq.filter (fun v -> v (currentModel) <> System.String.Empty)
+            |> Seq.filter (fun v -> v (this.currentModel) <> System.String.Empty)
             |> Seq.isEmpty
             |> not
 
         member this.GetErrors(columnName) =
             if (propertyErrors.ContainsKey(columnName)
-                && propertyErrors.[columnName] (currentModel) <> "") then
-                [ propertyErrors.[columnName] (currentModel) ]
+                && propertyErrors.[columnName] (this.currentModel) <> "") then
+                [ propertyErrors.[columnName] (this.currentModel) ]
             else
                 []
 
         [<CLIEvent>]
         member this.ErrorsChanged = errorEv.Publish
+
+    override this.Equals(other) =
+        match other with
+        | :? T<'ModelT> as otherT ->
+            let otherModel = otherT.currentModel :> obj
+            let thisModel = this.currentModel :> obj
+            let result =  otherModel.Equals(thisModel)
+            result
+        | _ -> false
+    override this.GetHashCode() = (this.currentModel :> obj).GetHashCode()
