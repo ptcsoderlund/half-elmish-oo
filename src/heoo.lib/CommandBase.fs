@@ -1,5 +1,4 @@
 ﻿module heoo.lib.CommandBase
-
 open System.Windows.Input
 
 type CanExecuteType = obj option -> bool

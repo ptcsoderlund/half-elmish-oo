@@ -1,5 +1,6 @@
 ﻿module heoo.lib.ViewModelBase
 
+open System
 open System.Collections.Concurrent
 open System.ComponentModel
 open System.Runtime.CompilerServices
@@ -24,16 +25,28 @@ type T<'ModelT>(initialModel: 'ModelT) =
 
     member val private currentModel = initialModel with get,set 
 
-    member x.getPropertyValue<'T>(getFunc: 'ModelT -> 'T, [<CallerMemberName>] ?propertyName) =
+    member this.getPropertyValue<'T>(getFunc: 'ModelT -> 'T, [<CallerMemberName>] ?propertyName) =
         match propertyName with
         | Some pName ->
             let wrapper =
                 fun modelX -> getFunc (modelX) :> obj
             if propertyGetters.ContainsKey pName |> not then
                 propertyGetters.TryAdd(pName, wrapper) |> ignore
-            getFunc (x.currentModel)
+            getFunc (this.currentModel)
         | _ -> failwith "propertyName cant be null when setting values"
-
+        
+    //Creates a command and a property which triggers propertyChanged on the "canExecute" function.
+    //Signature of CanExecute is CommandParameter -> Model -> bool
+    member this.getCommandBaseT<'T>(canExecute:Object option->'ModelT -> bool,execute: Object option -> unit,[<CallerMemberName>] ?propertyName:string) :CommandBase.T =
+        let propName =
+            match propertyName with
+            | Some v -> v
+            | _ -> failwith "propertyName cant be null when setting values"
+        let _canExecute = fun (o:obj option) ->
+            canExecute o 
+            |> fun x ->  this.getPropertyValue(x,propName)
+        CommandBase.T(_canExecute,execute)
+        
     member _.getPropertyError(getFunc: 'ModelT -> string, [<CallerMemberName>] ?propertyName) =
         match propertyName with
         | Some pName -> propertyErrors.TryAdd(pName, getFunc) |> ignore
@@ -49,7 +62,6 @@ type T<'ModelT>(initialModel: 'ModelT) =
         if (newModel :> obj) = null then
             failwith "null is toxic, dont pass it in"
 
-        let oldModel = this.currentModel
         this.currentModel <- newModel
         //Run all functions in all properties and trigger notification when changed.
         //Somewhat guarded against null values, but plz avoid them at all costs.

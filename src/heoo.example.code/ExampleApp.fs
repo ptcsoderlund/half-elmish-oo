@@ -47,13 +47,10 @@ type MyVm(initialModel,messageCallback) =
         CommandBase.AlwaysExecutableCommand(fun _ -> messageCallback Increase)
     member this.DecreaseCmd = 
         CommandBase.AlwaysExecutableCommand(fun _ -> messageCallback Decrease)
-    member this.ResetCmd
-        with get() = 
-            this.getPropertyValue(fun m ->
-                let canExecute = fun _ -> m.Count <> 0//already reset
-                let execute = fun _ -> messageCallback Reset
-                CommandBase.T(canExecute,execute)
-            )
+    member this.ResetCmd =
+           let canExecute = fun _ m -> m.Count <> 0 //commandParameter -> model -> bool
+           let execute = fun _ -> messageCallback Reset //commandParameter -> unit
+           this.getCommandBaseT(canExecute,execute)
     member this.GetAllErrorMessages
         //ignore the keys (propertynames) and just get the values in an array
         with get():string array = this.getPropertyValue(
@@ -66,7 +63,7 @@ type MyVm(initialModel,messageCallback) =
 //Step 3
 
 let initialModel = { Count = 0; SomeText = "Hello World" }
-let program = ElmishProgramAsync.T(initialModel,Update)
+let program = new ElmishProgramAsync.T<Model,Message>(initialModel,Update)
 //WARNING!, once you call (IDisposable)Dispose() on the program loop, you can't use it anymore.
 //like this: program.AsIDisposable().Dispose()
 let viewModelInstance = MyVm(initialModel,program.PostMessage)
