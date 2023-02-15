@@ -49,15 +49,15 @@ type MyVm(initialModel,messageCallback) =
         
     member this.IncreaseCmd = 
         CommandBase.AlwaysExecutableCommand(fun _ -> messageCallback Increase)
+        
     member this.DecreaseCmd = 
         CommandBase.AlwaysExecutableCommand(fun _ -> messageCallback Decrease)
-    member this.ResetCmd
-        with get() = 
-            this.getPropertyValue(fun m ->
-                let canExecute = fun _ -> m.Count <> 0//already reset
-                let execute = fun _ -> messageCallback Reset
-                CommandBase.T(canExecute,execute)
-            )
+        
+    member this.ResetCmd =
+           let canExecute = fun _ m -> m.Count <> 0 //commandParameter -> model -> bool
+           let execute = fun _ -> messageCallback Reset //commandParameter -> unit
+           this.getCommandBaseT(canExecute,execute)
+           
     member this.GetAllErrorMessages
         //ignore the keys (propertynames) and just get the values in an array
         with get():string array = this.getPropertyValue(
