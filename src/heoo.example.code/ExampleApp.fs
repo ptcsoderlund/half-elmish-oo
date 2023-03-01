@@ -2,6 +2,7 @@
 
 open System
 open heoo.lib
+open heoo.lib.ElmishProgramAsync
 
 //Lets just make a counter app for demoing purpose
 //Elmish programs need a model a message and update function.
@@ -63,7 +64,7 @@ type MyVm(initialModel,messageCallback) =
 //Step 3
 
 let initialModel = { Count = 0; SomeText = "Hello World" }
-let program = new ElmishProgramAsync.T<Model,Message>(initialModel,Update)
+let program = new ElmishProgramAsync.T<Model,Message>(initialModel,Update,ModelUpdateTrigger.AfterEachMessage)
 //WARNING!, once you call (IDisposable)Dispose() on the program loop, you can't use it anymore.
 //like this: program.AsIDisposable().Dispose()
 let viewModelInstance = MyVm(initialModel,program.PostMessage)
